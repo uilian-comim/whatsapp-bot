@@ -1,0 +1,6 @@
+{
+    "watch": ["src"],
+    "ext": "ts",
+    "exec": "clear && ts-node --swc src/index.ts",
+    "clear": true
+}
