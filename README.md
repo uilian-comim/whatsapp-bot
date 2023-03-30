@@ -11,7 +11,7 @@ yarn || npm install
 ## Usage
 
 ```sh
-yarn dev || yarn build && yarn start
+yarn dev || yarn build && yarn start || npm run dev || npm run build && npm run start
 ```
 
 ## Author
