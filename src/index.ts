@@ -1,6 +1,9 @@
 import { PlaceData } from "@googlemaps/google-maps-services-js";
+import dotenv from "dotenv";
 import { Client, LocalAuth } from "whatsapp-web.js";
 import FindEstablishments from "./GoogleAPI";
+
+dotenv.config();
 
 const client = new Client({
     authStrategy: new LocalAuth(),
@@ -18,6 +21,8 @@ client.on("qr", (qr) => {
 });
 
 client.on("message", async (message) => {
+    console.log(message.from);
+    if (message.from !== "555599104088@c.us" && message.from !== "555592279998@c.us") return;
     if (message.location) {
         console.log(message.location);
         latitude = Number(message.location.latitude);
