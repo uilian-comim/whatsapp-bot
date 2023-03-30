@@ -1,5 +1,6 @@
 import { PlaceData } from "@googlemaps/google-maps-services-js";
 import dotenv from "dotenv";
+import qrcode from "qrcode-terminal";
 import { Client, LocalAuth } from "whatsapp-web.js";
 import FindEstablishments from "./GoogleAPI";
 
@@ -7,7 +8,9 @@ dotenv.config();
 
 const client = new Client({
     authStrategy: new LocalAuth(),
-    puppeteer: { headless: false },
+    puppeteer: {
+        args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    },
 });
 
 const googleAPI = new FindEstablishments();
@@ -18,6 +21,7 @@ let establishments: Partial<PlaceData>[] | undefined = undefined;
 
 client.on("qr", (qr) => {
     console.log("QR RECEIVED", qr);
+    qrcode.generate(qr, { small: true });
 });
 
 client.on("message", async (message) => {
