@@ -21,10 +21,7 @@ client.on("qr", (qr) => {
 });
 
 client.on("message", async (message) => {
-    console.log(message.from);
-    if (message.from !== "555599104088@c.us" && message.from !== "555592279998@c.us") return;
     if (message.location) {
-        console.log(message.location);
         latitude = Number(message.location.latitude);
         longitude = Number(message.location.longitude);
         message.reply("Localização armazenada com sucesso.\nBuscando restaurantes e fast-foods em um raio de 5km...");
@@ -60,15 +57,13 @@ client.on("message", async (message) => {
         } else {
             establishments = finded;
             message.reply("Os estabelecimentos encontrados foram:");
-            const test = finded.map((item, index) => {
+            const results = finded.map((item, index) => {
                 return `${item.name}\n`;
             });
 
-            message.reply(`${test.join("")}`, undefined, {
-                quotedMessageId: undefined,
-            });
+            client.sendMessage(message.from, results.join(""));
 
-            return message.reply("Digite o nome do estabelecimento que deseja saber a localidade.");
+            return client.sendMessage(message.from, "Digite o nome do estabelecimento que deseja obter o endereço.");
         }
     } else {
         const result = googleAPI.filterResult(establishments, message.body);
@@ -78,7 +73,29 @@ client.on("message", async (message) => {
                 "Estabelecimento informado não encontrado.\nSe deseja reiniciar o procedimento digite: *Restart*"
             );
         } else {
-            return message.reply(`O estabelecimento mencionado se encontra em: ${result}`);
+            if (!result.name && !result.address) {
+                return client.sendMessage(
+                    message.from,
+                    "Não foi possível obter o endereço e nome do estabelecimento. Contate um administrador."
+                );
+            }
+
+            if (!result.address) {
+                return client.sendMessage(
+                    message.from,
+                    `Não foi possível obter o endereço do estabelecimento ${result.name}`
+                );
+            }
+
+            if (!result.name) {
+                return message.reply(`O estabelecimento mencionado por você se encontra em: ${result.address}`);
+            }
+
+            if (result.name && result.address) {
+                return message.reply(`O estabelecimento ${result.name} se encontra em: ${result.address}`);
+            }
+
+            return client.sendMessage(message.from, "Erro desconhecido. Contate um administrador.");
         }
     }
 });

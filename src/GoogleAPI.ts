@@ -2,6 +2,12 @@ import { Client, LatLngLiteral, PlaceData } from "@googlemaps/google-maps-servic
 
 const client = new Client({});
 
+interface IFilterResult {
+    name?: string;
+    address?: string;
+    location?: LatLngLiteral;
+}
+
 export default class FindEstablishments {
     async findRestaurant(latitude: number, longitude: number): Promise<Partial<PlaceData>[] | undefined> {
         try {
@@ -26,7 +32,7 @@ export default class FindEstablishments {
         }
     }
 
-    filterResult(results: Partial<PlaceData>[], filter: string): string | undefined {
+    filterResult(results: Partial<PlaceData>[], filter: string): IFilterResult {
         const filtered = results.map((result, index) => {
             if (!result.name) return;
 
@@ -37,10 +43,16 @@ export default class FindEstablishments {
             }
         });
 
-        const response = filtered.filter((item) =>
-            item?.name?.toLocaleLowerCase().includes(filter.toLocaleLowerCase())
-        );
+        const item = filtered.filter((item) => item?.name?.toLocaleLowerCase().includes(filter.toLocaleLowerCase()));
 
-        return response[0]?.vicinity;
+        const location = item[0]?.geometry?.location;
+
+        const response = {
+            name: item[0]?.name,
+            address: item[0]?.vicinity,
+            location,
+        };
+
+        return response;
     }
 }
