@@ -1,23 +1,28 @@
 {
+    "name": "whatsapp-bot",
+    "version": "1.0.0",
+    "main": "index.js",
+    "repository": "git@github.com:uilian-comim/whatsapp-bot.git",
+    "author": "Uilian Comim <ucomim@hotmail.com>",
+    "license": "MIT",
+    "scripts": {
+        "dev": "nodemon",
+        "build": "tsc",
+        "start": "node ./dist/index.js"
+    },
     "dependencies": {
         "@googlemaps/google-maps-services-js": "^3.3.27",
         "dotenv": "^16.0.3",
         "qrcode-terminal": "^0.12.0",
         "whatsapp-web.js": "^1.19.5"
     },
-    "scripts": {
-        "dev": "nodemon",
-        "build": "tsc",
-        "start": "node ./dist/index.js"
-    },
     "devDependencies": {
         "@types/google.maps": "^3.52.4",
         "@types/qrcode-terminal": "^0.12.0",
-        "clear": "^0.1.0",
         "nodemon": "^2.0.22",
         "prettier": "^2.8.7",
         "swc": "^1.0.11",
         "ts-node": "^10.9.1",
-        "typescript": "5.0.2"
+        "typescript": "^5.0.3"
     }
 }

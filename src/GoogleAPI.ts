@@ -6,6 +6,7 @@ interface IFilterResult {
     name?: string;
     address?: string;
     location?: LatLngLiteral;
+    error?: string;
 }
 
 export default class FindEstablishments {
@@ -47,12 +48,42 @@ export default class FindEstablishments {
 
         const location = item[0]?.geometry?.location;
 
-        const response = {
-            name: item[0]?.name,
-            address: item[0]?.vicinity,
-            location,
-        };
+        if (location) {
+            const response = {
+                name: item[0]?.name,
+                address: item[0]?.vicinity,
+                location,
+            };
 
-        return response;
+            return response;
+        } else {
+            return { error: "Estabelecimento informado não encontrado." };
+        }
+    }
+
+    getResponse(establishments: Partial<PlaceData>[] | undefined, message: string): string {
+        if (establishments) {
+            const result = this.filterResult(establishments, message);
+
+            if (result.error) {
+                return result.error;
+            } else {
+                if (!result.name && !result.address) {
+                    return "Não foi possível obter o endereço e nome do estabelecimento.";
+                }
+
+                if (!result.address) {
+                    return `Não foi possível obter o endereço do estabelecimento ${result.name}`;
+                }
+
+                if (!result.name) {
+                    return `O estabelecimento mencionado por você se encontra em: ${result.address}`;
+                }
+
+                return `O estabelecimento ${result.name} se encontra em: ${result.address}`;
+            }
+        } else {
+            return "Erro desconhecido. Contate um administrador.";
+        }
     }
 }

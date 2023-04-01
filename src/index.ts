@@ -47,10 +47,6 @@ client.on("message", async (message) => {
         }
     }
 
-    if (!latitude || !longitude) {
-        return message.reply("Para usar meus serviços você deve primeiro enviar sua localização.");
-    }
-
     if (message.body.toLocaleLowerCase() === "restart") {
         latitude = 0;
         longitude = 0;
@@ -69,41 +65,8 @@ client.on("message", async (message) => {
         return message.reply("Procedimento interrompido com sucesso.");
     }
 
-    if (!establishments) {
-        return message.reply("Erro desconhecido. Contate um administrador.");
-    } else {
-        const result = googleAPI.filterResult(establishments, message.body);
-
-        if (!result) {
-            return message.reply(
-                "Estabelecimento informado não encontrado.\nSe deseja reiniciar o procedimento digite: *Restart*"
-            );
-        } else {
-            if (!result.name && !result.address) {
-                return client.sendMessage(
-                    message.from,
-                    "Não foi possível obter o endereço e nome do estabelecimento. Contate um administrador."
-                );
-            }
-
-            if (!result.address) {
-                return client.sendMessage(
-                    message.from,
-                    `Não foi possível obter o endereço do estabelecimento ${result.name}`
-                );
-            }
-
-            if (!result.name) {
-                return message.reply(`O estabelecimento mencionado por você se encontra em: ${result.address}`);
-            }
-
-            if (result.name && result.address) {
-                return message.reply(`O estabelecimento ${result.name} se encontra em: ${result.address}`);
-            }
-
-            return client.sendMessage(message.from, "Erro desconhecido. Contate um administrador.");
-        }
-    }
+    const response = googleAPI.getResponse(establishments, message.body);
+    client.sendMessage(message.from, response);
 });
 
 client.on("ready", () => {
